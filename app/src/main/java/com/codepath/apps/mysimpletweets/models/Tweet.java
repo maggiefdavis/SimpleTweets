@@ -46,6 +46,16 @@ public class Tweet implements Serializable {
         }
         return tweet;
     }
+/*
+    public static ArrayList<Tweet> fromSearchJSON (JSONObject jsonObject) {
+        try {
+            ArrayList<Tweet> tweets = fromJSONArray(jsonObject.getJSONArray("statuses"));
+            return tweets;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<Tweet>();
+    }*/
 
     public static ArrayList<Tweet> fromJSONArray (JSONArray jsonArray) {
         ArrayList<Tweet> tweets = new ArrayList<>();

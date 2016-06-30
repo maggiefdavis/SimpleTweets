@@ -6,6 +6,7 @@ import android.util.Log;
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.RequestParams;
 
 import org.scribe.builder.api.Api;
@@ -96,5 +97,13 @@ public class TwitterClient extends OAuthBaseClient {
 		Log.d("DEBUG", apiUrl.toString());
 	}
 
-	//Compose Tweet
+	public void searchTweets (String query, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("search/tweets.json");
+		RequestParams params = new RequestParams();
+		params.put("q", query);
+		params.put("count", 25);
+		params.put("lang", "en");
+		RequestHandle handler2 = getClient().get(apiUrl, params, handler);
+		Log.d("DEBUG", apiUrl.toString());
+	}
 }
