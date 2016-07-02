@@ -11,10 +11,24 @@ import java.util.ArrayList;
  * Created by mfdavis on 6/27/16.
  */
 public class Tweet implements Serializable {
+    private static JSONObject json;
     private String body;
     private long uid;
     private User user;
     private String createdAt;
+    private int favoriteCount;
+    private int retweetCount;
+    private Boolean favorited;
+
+    public void setRetweeted(Boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
+    public void setFavorited(Boolean favorited) {
+        this.favorited = favorited;
+    }
+
+    private Boolean retweeted;
 
 
     public String getBody() {
@@ -28,12 +42,30 @@ public class Tweet implements Serializable {
         return user;
     }
 
+    public Boolean getFavorited() {
+       return favorited;
+    }
+
+    public Boolean getRetweeted() {
+        return retweeted;
+    }
+
+    public int getFavoriteCount() {
+       return favoriteCount;
+    }
+
+    public int getRetweetCount() {
+        return retweetCount;
+    }
+
+
 
 
     //Deserialize Json
     //Tweet.fromJSON
 
     public static Tweet fromJSON(JSONObject jsonObject) {
+        json = jsonObject;
         Tweet tweet = new Tweet();
         //Extract and store values
         try {
@@ -41,6 +73,10 @@ public class Tweet implements Serializable {
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+            tweet.favorited = jsonObject.getBoolean("favorited");
+            tweet.retweeted = jsonObject.getBoolean("retweeted");
+            tweet.favoriteCount = jsonObject.getInt("favorite_count");
+            tweet.retweetCount = jsonObject.getInt("retweet_count");
         } catch (JSONException e) {
             e.printStackTrace();
         }

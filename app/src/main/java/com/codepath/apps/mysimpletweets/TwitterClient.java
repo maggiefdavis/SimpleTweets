@@ -3,10 +3,10 @@ package com.codepath.apps.mysimpletweets;
 import android.content.Context;
 import android.util.Log;
 
+import com.codepath.apps.mysimpletweets.models.Tweet;
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.RequestParams;
 
 import org.scribe.builder.api.Api;
@@ -89,9 +89,12 @@ public class TwitterClient extends OAuthBaseClient {
 
 	}
 
-	public void postStatus (String status, AsyncHttpResponseHandler handler) {
+	public void postStatus (String status, Tweet parentTweet, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/update.json");
 		RequestParams params = new RequestParams();
+		if (parentTweet != null) {
+			params.put("in_reply_to_status_id", parentTweet.getUid());
+		}
 		params.put("status", status);
 		getClient().post(apiUrl, params, handler);
 		Log.d("DEBUG", apiUrl.toString());
@@ -103,7 +106,21 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("q", query);
 		params.put("count", 25);
 		params.put("lang", "en");
-		RequestHandle handler2 = getClient().get(apiUrl, params, handler);
+		getClient().get(apiUrl, params, handler);
 		Log.d("DEBUG", apiUrl.toString());
+	}
+
+	public void favorite (long uid, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/create.json");
+		RequestParams params = new RequestParams();
+		params.put("id", uid);
+		getClient().post(apiUrl, params, handler);
+	}
+
+	public void retweet (long uid, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/retweet.json");
+		RequestParams params = new RequestParams();
+		params.put("id", uid);
+		getClient().post(apiUrl, params, handler);
 	}
 }

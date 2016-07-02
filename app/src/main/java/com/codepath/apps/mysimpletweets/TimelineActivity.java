@@ -1,6 +1,7 @@
 package com.codepath.apps.mysimpletweets;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -8,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.mysimpletweets.fragments.HomeTimelineFragment;
@@ -24,6 +26,11 @@ public class TimelineActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        //Customize action bar
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.ic_logo_blue);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         //Get viewpager
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         //Set viewpager adapter for the pager
@@ -33,10 +40,6 @@ public class TimelineActivity extends ActionBarActivity {
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         //Attach pager tabstrip to the viewpager
         tabStrip.setViewPager(viewPager);
-
-     /*  if (savedInstanceState == null) {
-            fragmentTweetsList = (TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_tweets_list);
-        }*/
     }
 
     @Override
@@ -44,6 +47,8 @@ public class TimelineActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.timeline, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(Color.GRAY);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -70,49 +75,9 @@ public class TimelineActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-    /*   if(id == R.id.action_settings) {
-            return true;
-        }
-
-        */
-
         return super.onOptionsItemSelected(item);
     }
-/*
-    //Adapter gets manager to inset or remove fragment from activity
-    public class TweetsPagerAdapter extends FragmentPagerAdapter {
-        final int PAGE_COUNT = 2;
-        private String tabTitles[] = { "Home", "Mentions"};
 
-        public TweetsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        //Order and creation of fragments within the pager
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 0) {
-                return new HomeTimelineFragment();
-            } else if (position == 1){
-                return new MentionsTimelineFragment();
-            } else {
-                return null;
-            }
-        }
-
-        //Return tab title
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        //How many fragments there are to swipe between
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-    }
-*/
     public void onProfileView(MenuItem mi) {
         Intent i = new Intent(this, ProfileActivity.class);
         startActivity(i);
@@ -122,16 +87,6 @@ public class TimelineActivity extends ActionBarActivity {
         Intent i = new Intent(this, ComposeActivity.class);
         startActivityForResult(i, REQUEST_CODE);
     }
-
-   /* public void onImageClick() {
-        Intent i = new Intent(this, ProfileActivity.class);
-        i.putExtra("username", )
-        startActivity(i);
-    }*/
-
-    //  ArrayList<Tweet> tweets = new ArrayList<>();
-    //  tweets.add(newTweet);
-    // fragmentTweetsList.addAll(tweets);
 
 
 
@@ -143,4 +98,5 @@ public class TimelineActivity extends ActionBarActivity {
             fragmentHomeTweets.appendTweet(newTweet);
         }
     }
+
 }

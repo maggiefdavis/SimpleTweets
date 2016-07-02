@@ -43,12 +43,7 @@ public class UserTimelineFragment extends TweetsListFragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 Log.d("DEBUG", response.toString());
-                //super.onSuccess(statusCode, headers, response);
 
-                //JSON HERE
-                //DESERIALIZE JSON
-                //CREATE MODELS
-                //LOAD THE MODEL DATA INTO LISTVIEW
 
                 addAll(Tweet.fromJSONArray(response));
             }
@@ -56,7 +51,6 @@ public class UserTimelineFragment extends TweetsListFragment {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d("DEBUG", errorResponse.toString());
-                // super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
     }

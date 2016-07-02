@@ -1,13 +1,17 @@
 package com.codepath.apps.mysimpletweets.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.codepath.apps.mysimpletweets.DetailActivity;
 import com.codepath.apps.mysimpletweets.R;
 import com.codepath.apps.mysimpletweets.TweetsArrayAdapter;
 import com.codepath.apps.mysimpletweets.models.Tweet;
@@ -22,21 +26,28 @@ public class TweetsListFragment extends Fragment {
     private ArrayList<Tweet> tweets;
     private TweetsArrayAdapter aTweets;
     private ListView lvTweets;
-
-    //inflation logic
+    private View v;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_tweets_list, container, false);
+        v = inflater.inflate(R.layout.fragment_tweets_list, container, false);
         lvTweets = (ListView) v.findViewById(R.id.lvTweets);
         //Connect adapter to listview
         lvTweets.setAdapter(aTweets);
+        lvTweets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent (getContext(), DetailActivity.class);
+                Tweet tweet = aTweets.getItem(position);
+                i.putExtra("tweet", tweet);
+                startActivity(i);
+            }
+        });
+
         return v;
     }
-
-    //creation lifecycle evet
 
 
     @Override
@@ -48,8 +59,15 @@ public class TweetsListFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
     public void addAll(List<Tweet> tweets) {
         aTweets.addAll(tweets);
+    }
+
+    public void clear() { aTweets.clear(); }
+
+    public SwipeRefreshLayout getSwipeContainer() {
+        return (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
     }
 
 
@@ -58,8 +76,4 @@ public class TweetsListFragment extends Fragment {
         aTweets.notifyDataSetChanged();
         lvTweets.setSelection(0);
     }
-
-   /* public static Fragment newInstance(int i, String s) {
-
-    }*/
 }

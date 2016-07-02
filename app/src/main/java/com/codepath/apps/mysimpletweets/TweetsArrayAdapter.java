@@ -1,8 +1,8 @@
 package com.codepath.apps.mysimpletweets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +26,9 @@ import java.util.Locale;
 //Taking Tweet objects and turning them into Views displayed in the list
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
     //Tweet tweet;
+    private final int REQUEST_CODE = 20;
+
+    private SmartFragmentStatePagerAdapter adapterViewPager;
 
     public TweetsArrayAdapter(Context context, List<Tweet> tweets) {
         super(context, 0, tweets);
@@ -45,9 +48,10 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         TextView tvUsername = (TextView) convertView.findViewById(R.id.tvUsername);
         TextView tvBody = (TextView) convertView.findViewById(R.id.tvBody);
         TextView tvTimestamp = (TextView) convertView.findViewById(R.id.tvTimestamp);
+        final ImageView ivReply = (ImageView) convertView.findViewById(R.id.ivReply);
         //Populate data into subviews
         tvName.setText(tweet.getUser().getName());
-        tvUsername.setText(tweet.getUser().getScreenName());
+        tvUsername.setText("@" + tweet.getUser().getScreenName());
         tvBody.setText(tweet.getBody());
         String dateString = tweet.getCreatedAt();
         String formattedTime = TimeFormatter.getTimeDifference(dateString);
@@ -60,8 +64,22 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
                 launchProfileView(tweet);
             }
         });
+        ivReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ivReply.setBackgroundResource(R.drawable.ic_reply_on);
+                launchReply(tweet);
+            }
+        });
+
         //Return view to be inserted into the list
         return convertView;
+    }
+
+    private void launchReply(Tweet tweet) {
+        Intent i = new Intent(getContext(), ComposeActivity.class);
+        i.putExtra("parent_tweet", tweet);
+        ((Activity) getContext()).startActivityForResult(i, REQUEST_CODE);
     }
 
 
@@ -73,23 +91,6 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
     }
 
-    // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
-    public String getRelativeTimeAgo(String rawJsonDate) {
-        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
-        sf.setLenient(true);
-
-        String relativeDate = "";
-        try {
-            long dateMillis = sf.parse(rawJsonDate).getTime();
-            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-        } catch (java.text.ParseException e) {
-            e.printStackTrace();
-        }
-
-        return relativeDate;
-    }
 
     /**
      * Given a date String of the format given by the Twitter API, returns a display-formatted

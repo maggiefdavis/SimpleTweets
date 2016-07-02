@@ -2,6 +2,8 @@ package com.codepath.apps.mysimpletweets.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.View;
 
 import com.codepath.apps.mysimpletweets.TwitterApplication;
 import com.codepath.apps.mysimpletweets.TwitterClient;
@@ -19,6 +21,7 @@ import cz.msebera.android.httpclient.Header;
  * Created by mfdavis on 6/30/16.
  */
 public class SearchTweetsFragment extends TweetsListFragment {
+    private SwipeRefreshLayout swipeContainer;
     private TwitterClient client;
 
     @Override
@@ -27,6 +30,22 @@ public class SearchTweetsFragment extends TweetsListFragment {
         client = TwitterApplication.getRestClient(); //singleton client
         populateResults();
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        swipeContainer = getSwipeContainer();
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                populateResults();
+                swipeContainer.setRefreshing(false);
+
+            }
+        });
+    }
+
 
     public static SearchTweetsFragment newInstance(String query) {
         SearchTweetsFragment searchFragment = new SearchTweetsFragment();
@@ -37,6 +56,7 @@ public class SearchTweetsFragment extends TweetsListFragment {
     }
 
     public void populateResults() {
+        clear();
         String query = getArguments().getString("query");
         client.searchTweets(query, new JsonHttpResponseHandler() {
             @Override

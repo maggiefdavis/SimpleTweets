@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.codepath.apps.mysimpletweets.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -20,20 +19,25 @@ public class ComposeActivity extends AppCompatActivity {
     EditText etTweet;
     Button btnTweet;
     Tweet newTweet;
+    Tweet parentTweet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
+        parentTweet = (Tweet) getIntent().getSerializableExtra("parent_tweet");
         client = TwitterApplication.getRestClient();
         etTweet = (EditText) findViewById(R.id.etTweet);
+        if (parentTweet != null) {
+            String screenName = parentTweet.getUser().getScreenName();
+            etTweet.setText("@" + screenName + ": ");
+        }
         btnTweet = (Button) findViewById(R.id.btnTweet);
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String status = etTweet.getText().toString();
-                Toast.makeText(ComposeActivity.this, "Button clicked!", Toast.LENGTH_SHORT).show();
-                client.postStatus(status, new JsonHttpResponseHandler() {
+                client.postStatus(status, parentTweet, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
